@@ -38,7 +38,10 @@ namespace PuSGSProjekat
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "PuSGSProjekat", Version = "v1" });
             });
 
+            services.AddScoped<IArticleService, ArticleService>();
+            services.AddScoped<IOrderService, OrderService>();
             services.AddScoped<IUserService, UserService>();
+       
 
             services.AddDbContext<DatabaseContext>(options =>
             {
