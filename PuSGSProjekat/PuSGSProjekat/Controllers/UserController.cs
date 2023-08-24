@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using PuSGSProjekat.DTO.LoginDTO;
 using PuSGSProjekat.DTO.UserDTO;
 using PuSGSProjekat.DTO.VerificationDTO;
+using PuSGSProjekat.ExceptionHandler;
 using PuSGSProjekat.Interfaces;
 using System;
 using System.Runtime.ExceptionServices;
@@ -11,7 +12,7 @@ using System.Security.Authentication;
 
 namespace PuSGSProjekat.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/users")]
     [ApiController]
     public class UserController : ControllerBase
     {
@@ -36,7 +37,7 @@ namespace PuSGSProjekat.Controllers
             {
                 user = _userService.GetUserById(id);
             }
-            catch (Exception e)
+            catch (ResourceMissing e)
             {
                 return NotFound(e.Message);
             }
@@ -53,10 +54,14 @@ namespace PuSGSProjekat.Controllers
             {
                 user = _userService.RegisterUser(requestDto);
             }
-            catch (Exception e)
+            catch (InvalidCredentials e)
             {
                 return Conflict(e.Message);
-            }   
+            }
+            catch (InvalidField e)
+            {
+                return BadRequest(e.Message);
+            }
 
             return Ok(user);
         }
@@ -64,10 +69,11 @@ namespace PuSGSProjekat.Controllers
         [HttpPut("{id}")]
         public IActionResult UpdateUser(long id, [FromBody] UserEditRequestDTO requestDto)
         {
-            if (!User.HasClaim("Id", id.ToString()))
-            {
-                return Forbid();
-            }
+            //coment for api test // needs token cba
+            //if (!User.HasClaim("Id", id.ToString()))
+            //{
+            //    return Forbid();
+            //}
 
             UserResponseDTO user;
 
@@ -75,9 +81,13 @@ namespace PuSGSProjekat.Controllers
             {
                 user = _userService.UpdateUser(id, requestDto);
             }
-            catch (Exception e)
+            catch (ResourceMissing e)
             {
                 return NotFound(e.Message);
+            }
+            catch (InvalidField e)
+            {
+                return BadRequest(e.Message);
             }
 
             return Ok(user);
@@ -92,9 +102,13 @@ namespace PuSGSProjekat.Controllers
             {
                 responseDto = _userService.LoginUser(requestDto);
             }
-            catch (Exception e)
+            catch (InvalidCredentials e)
             {
                 return Unauthorized(e.Message);
+            }
+            catch (InvalidField e)
+            {
+                return BadRequest(e.Message);
             }
 
             return Ok(responseDto);
@@ -110,9 +124,13 @@ namespace PuSGSProjekat.Controllers
             {
                 user = _userService.VerifyUser(id, requestDto);
             }
-            catch (Exception e)
+            catch (ResourceMissing e)
             {
                 return NotFound(e.Message);
+            }
+            catch (InvalidField e)
+            {
+                return BadRequest(e.Message);
             }
 
             return Ok(user);

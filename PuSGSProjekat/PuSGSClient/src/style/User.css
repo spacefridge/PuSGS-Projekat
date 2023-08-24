@@ -1,0 +1,88 @@
+.user {
+  display: flex;
+  gap: 16px;
+}
+
+.user-photo {
+  flex: 0 0 120px;
+  display: flex;
+}
+
+.user-photo img {
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+}
+
+.user-middle {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.user-title {
+  background-color:  lightblue;
+  padding: 5px 10px;
+  border-radius: 5px;
+}
+
+.user-details {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  row-gap: 5px;
+  height: 100%;
+}
+
+.user-details div {
+  background-color: lightblue;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  border-radius: 5px;
+  height: 50%;
+  padding-left: 10px;
+}
+
+.user-right {
+  flex: 1;
+  max-width: 20%;
+  width: 20rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  row-gap: 5px;
+}
+
+.user-status,
+.user-id {
+  background-color: lightblue;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 5px;
+  height: 30%;
+}
+
+.user-options {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.user-verify {
+  color: blue;
+  cursor: pointer;
+}
+
+.status-0 {
+  background-color: #eeee4d;
+}
+
+.status-1 {
+  background-color: #ee2222;
+}
+
+.status-2 {
+  background-color: #27f027;
+}

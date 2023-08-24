@@ -1,14 +1,16 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using PuSGSProjekat.DTO.DeleteDTO;
 using PuSGSProjekat.DTO.OrderDTO;
+using PuSGSProjekat.ExceptionHandler;
 using PuSGSProjekat.Interfaces;
 using System;
 using System.Linq;
 
 namespace PuSGSProjekat.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/orders")]
     [ApiController]
     public class OrderController : ControllerBase
     {
@@ -35,7 +37,7 @@ namespace PuSGSProjekat.Controllers
             {
                 order = _orderService.GetOrderById(id);
             }
-            catch (Exception e)
+            catch (ResourceMissing e)
             {
                 return NotFound(e.Message);
             }
@@ -54,12 +56,44 @@ namespace PuSGSProjekat.Controllers
             {
                 order = _orderService.CreateOrder(requestDto, userId);
             }
-            catch (Exception e)
+            catch (ResourceMissing e)
             {
                 return NotFound(e.Message);
             }
+            catch (InvalidField e)
+            {
+                return BadRequest(e.Message);
+            }
 
             return Ok(order);
+        }
+
+        [HttpDelete("{id}")]
+        [Authorize(Roles = "Buyer")]
+        public IActionResult DeleteOrder(long id)
+        {
+            long userId = long.Parse(User.Claims.FirstOrDefault(x => x.Type == "Id").Value);
+
+            DeleteResponseDTO responseDto;
+
+            try
+            {
+                responseDto = _orderService.CancelOrder(id, userId);
+            }
+            catch (ResourceMissing e)
+            {
+                return NotFound(e.Message);
+            }
+            catch (InvalidField e)
+            {
+                return BadRequest(e.Message);
+            }
+            catch (Forbidden)
+            {
+                return Forbid();
+            }
+
+            return Ok(responseDto);
         }
     }
 }

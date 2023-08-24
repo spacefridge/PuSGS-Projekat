@@ -10,14 +10,17 @@ namespace PuSGSProjekat.ModelConfigs
 
         public void Configure(EntityTypeBuilder<Order> builder)
         {
+
+            //valid
             builder.HasKey(x => x.Id);
+
             builder.Property(x => x.Id).ValueGeneratedOnAdd();
 
             builder.Property(x => x.Quantity).IsRequired();
 
-            builder.Property(x => x.Comment).HasMaxLength(60);
+            builder.Property(x => x.Comment).HasMaxLength(100);
 
-            builder.Property(x => x.Address).IsRequired().HasMaxLength(30);
+            builder.Property(x => x.Address).IsRequired().HasMaxLength(20);
 
             builder
                 .HasOne(x => x.Article)

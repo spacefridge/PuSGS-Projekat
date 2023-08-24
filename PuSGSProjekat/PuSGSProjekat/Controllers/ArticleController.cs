@@ -5,10 +5,12 @@ using PuSGSProjekat.DTO.ArticleDTO;
 using PuSGSProjekat.Interfaces;
 using System;
 using System.Linq;
+using PuSGSProjekat.ExceptionHandler;
+using PuSGSProjekat.DTO.DeleteDTO;
 
 namespace PuSGSProjekat.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/articles")]
     [ApiController]
     public class ArticleController : ControllerBase
     {
@@ -34,7 +36,7 @@ namespace PuSGSProjekat.Controllers
             {
                 article = _articleService.GetArticleById(id);
             }
-            catch (Exception e)
+            catch (ResourceMissing e)
             {
                 return NotFound(e.Message);
             }
@@ -53,7 +55,7 @@ namespace PuSGSProjekat.Controllers
             {
                 article = _articleService.CreateArticle(requestDto, userId);
             }
-            catch (Exception e)
+            catch (InvalidField e)
             {
                 return BadRequest(e.Message);
             }
@@ -72,12 +74,44 @@ namespace PuSGSProjekat.Controllers
             {
                 article = _articleService.UpdateArticle(id, requestDto, userId);
             }
-            catch (Exception e)
+            catch (ResourceMissing e)
             {
                 return NotFound(e.Message);
             }
+            catch (InvalidField e)
+            {
+                return BadRequest(e.Message);
+            }
+            catch (Forbidden)
+            {
+                return Forbid();
+            }
 
             return Ok(article);
+        }
+
+        [HttpDelete("{id}")]
+        [Authorize(Roles = "Seller", Policy = "IsVerifiedSeller")]
+        public IActionResult DeleteArticle(long id)
+        {
+            long userId = long.Parse(User.Claims.FirstOrDefault(x => x.Type == "Id").Value);
+
+            DeleteResponseDTO responseDto;
+
+            try
+            {
+                responseDto = _articleService.DeleteArticle(id, userId);
+            }
+            catch (ResourceMissing e)
+            {
+                return NotFound(e.Message);
+            }
+            catch (Forbidden)
+            {
+                return Forbid();
+            }
+
+            return Ok(responseDto);
         }
     }
 }
